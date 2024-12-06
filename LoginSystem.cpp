@@ -34,13 +34,13 @@ void LoginSystem::mostrarMenu() {
 }
 
 void LoginSystem::iniciarSesion() {
-	string nombre, rol;
+	string nombre, contra;
 	cout << "Nombre de usuario: ";
 	cin >> nombre;
-	cout << "Rol (ADM o USR): ";
-	cin >> rol;
+	cout << "ingrese la contraseña: ";
+	cin >> contra;
 	
-	if (gestor.validarCredenciales(nombre, rol)) {
+	if (gestor.validarCredenciales(nombre, contra)) {
 		cout << "Inicio de sesión exitoso. Bienvenido, " << nombre << "!\n";
 	} else {
 		cout << "Credenciales incorrectas.\n";
@@ -49,7 +49,7 @@ void LoginSystem::iniciarSesion() {
 
 void LoginSystem::registrarUsuario() {
 	int id, telefono;
-	string nombre, direccion, rol;
+	string nombre, direccion, rol, password;
 	
 	cout << "ID: ";
 	cin >> id;
@@ -60,10 +60,23 @@ void LoginSystem::registrarUsuario() {
 	getline(cin, direccion);
 	cout << "Rol (ADM o USR): ";
 	cin >> rol;
+	cout << "Contraseña: ";
+	
+	bool caract = true;
+	while(caract){
+		cin >> password;
+		if(password.length() < 8){
+			cout<<"su contraseña debe tener almenos 8 caracteres";
+			caract = true;
+		}else{
+			caract = false;
+		}
+	}
+
 	cout << "Teléfono: ";
 	cin >> telefono;
 	
-	Usuario nuevoUsuario(id, nombre.c_str(), direccion.c_str(), rol.c_str(), telefono);
+	Usuario nuevoUsuario(id, nombre.c_str(), direccion.c_str(), rol.c_str(), password.c_str(), telefono);
 	gestor.agregarUsuario(nuevoUsuario);
 	
 	cout << "Usuario registrado exitosamente.\n";

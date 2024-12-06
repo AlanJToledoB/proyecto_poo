@@ -6,7 +6,7 @@ struct usuario {
 	char Nombre[50];
 	char Direccion[50];
 	char Rol[5];
-	char password[250];
+	char Password[250];
 	int telefono;
 };
 
