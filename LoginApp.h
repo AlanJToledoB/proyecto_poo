@@ -12,11 +12,12 @@ private:
 	
 	// Campos para el registro
 	wxTextCtrl* txtRegNombre;      // Campo para el nombre en registro
+	wxTextCtrl* txtDni;   
 	wxTextCtrl* txtRegPassword;    // Campo para la contraseña en registro
 	wxTextCtrl* txtRol;            // Campo para el rol en registro
 	wxTextCtrl* txtDireccion;      // Campo para la dirección en registro
 	wxTextCtrl* txtTelefono;       // Campo para el teléfono en registro
-	
+    // Campo para el teléfono en registro
 	// Botones de la aplicación
 	wxButton* btnLogin;            // Botón para iniciar sesión
 	wxButton* btnRegistrar;        // Botón para registrar usuario

@@ -9,16 +9,17 @@ using namespace std;
 
 class GestorUsuarios {
 private:
-	string archivo; // Archivo que contiene los datos de usuarios
+	string archivo;
 	
 public:
-	GestorUsuarios(const string& archivoNombre); // Constructor
-	void agregarUsuario(const Usuario& usuario); // Agregar un usuario al archivo
-	Usuario buscarUsuarioPorNombre(const string& nombre); // Buscar usuario por nombre
-	bool validarCredenciales(const string& nombre, const string& password); // Validar credenciales de usuario
-	void mostrarUsuarios(); // Mostrar lista de usuarios en consola
+	GestorUsuarios(const string& archivoNombre);
 	
-	vector<Usuario> leerUsuarios(); // Leer todos los usuarios (cambiar a public)
+	void agregarUsuario(const Usuario& usuario);
+	Usuario buscarUsuarioPorNombre(const string& nombre);
+	bool validarCredenciales(const string& nombre, const string& password);
+	void mostrarUsuarios();
+	
+	vector<Usuario> leerUsuarios();
 };
 
 #endif

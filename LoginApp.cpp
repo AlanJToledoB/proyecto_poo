@@ -4,7 +4,7 @@
 
 // Constructor de la aplicación
 LoginApp::LoginApp(const wxString& title) 
-	: wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), gestor("usuarios.txt") {
+	: wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), gestor("usuarios.dat") {
 	
 	// Panel principal para contener los subpaneles
 	wxPanel* mainPanel = new wxPanel(this);
@@ -38,36 +38,46 @@ LoginApp::LoginApp(const wxString& title)
 	new wxStaticText(registerPanel, wxID_ANY, "Nombre:", wxPoint(20, 40));
 	txtRegNombre = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 40), wxSize(160, 25));
 	
+	// Etiqueta y campo de texto para el DNI
+	new wxStaticText(registerPanel, wxID_ANY, "DNI:", wxPoint(20, 80));
+	txtDni = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 80), wxSize(160, 25));
+	
 	// Etiqueta y campo de texto para la contraseña
-	new wxStaticText(registerPanel, wxID_ANY, "Contraseña:", wxPoint(20, 80));
-	txtRegPassword = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 80), wxSize(160, 25), wxTE_PASSWORD);
+	new wxStaticText(registerPanel, wxID_ANY, "Contraseña:", wxPoint(20, 120));
+	txtRegPassword = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 120), wxSize(160, 25), wxTE_PASSWORD);
 	
 	// Etiqueta y campo de texto para el rol
-	new wxStaticText(registerPanel, wxID_ANY, "Rol:", wxPoint(20, 120));
-	txtRol = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 120), wxSize(160, 25));
+	new wxStaticText(registerPanel, wxID_ANY, "Rol:", wxPoint(20, 160));
+	txtRol = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 160), wxSize(160, 25));
 	
 	// Etiqueta y campo de texto para la dirección
-	new wxStaticText(registerPanel, wxID_ANY, "Dirección:", wxPoint(20, 160));
-	txtDireccion = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 160), wxSize(160, 25));
+	new wxStaticText(registerPanel, wxID_ANY, "Dirección:", wxPoint(20, 200));
+	txtDireccion = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 200), wxSize(160, 25));
 	
 	// Etiqueta y campo de texto para el teléfono
-	new wxStaticText(registerPanel, wxID_ANY, "Teléfono:", wxPoint(20, 200));
-	txtTelefono = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 200), wxSize(160, 25));
+	new wxStaticText(registerPanel, wxID_ANY, "Teléfono:", wxPoint(20, 240));
+	txtTelefono = new wxTextCtrl(registerPanel, wxID_ANY, "", wxPoint(100, 240), wxSize(160, 25));
+	
 	
 	// Botón para registrar usuario
 	btnRegistrar = new wxButton(registerPanel, wxID_ANY, "Registrar", wxPoint(90, 240));
 	btnRegistrar->Bind(wxEVT_BUTTON, &LoginApp::OnRegistrar, this); // Vincula el evento al botón
 	
 	// Botón para mostrar usuarios
+	// Crear el botón "Mostrar Usuarios" en el panel de registro
 	btnMostrar = new wxButton(registerPanel, wxID_ANY, "Mostrar Usuarios", wxPoint(90, 280));
-	btnMostrar->Bind(wxEVT_BUTTON, &LoginApp::OnMostrar, this); // Vincula el evento al botón
 	
-	// Añadir los paneles al sizer
-	sizer->Add(loginPanel, 1, wxEXPAND | wxALL, 5);
-	sizer->Add(registerPanel, 1, wxEXPAND | wxALL, 5);
+	// Vincular el evento wxEVT_BUTTON del botón con el método OnMostrar
+	// Cuando el botón es presionado, se ejecutará el método LoginApp::OnMostrar
+	btnMostrar->Bind(wxEVT_BUTTON, &LoginApp::OnMostrar, this);
 	
-	// Configurar el sizer del panel principal
+	// Agregar los paneles al Sizer para que se distribuyan correctamente en el panel principal
+	sizer->Add(loginPanel, 1, wxEXPAND | wxALL, 5); // Agrega loginPanel con proporción 1 y un margen de 5
+	sizer->Add(registerPanel, 1, wxEXPAND | wxALL, 5); // Agrega registerPanel con proporción 1 y un margen de 5
+	
+	// Configurar el Sizer para el mainPanel para gestionar el diseño de sus elementos secundarios
 	mainPanel->SetSizer(sizer);
+	
 }
 
 // Evento: iniciar sesión
@@ -85,6 +95,7 @@ void LoginApp::OnLogin(wxCommandEvent& event) {
 // Evento: registrar usuario
 void LoginApp::OnRegistrar(wxCommandEvent& event) {
 	wxString nombre = txtRegNombre->GetValue();         // Obtener el nombre ingresado
+	wxString dni = txtDni->GetValue();        // Obtener el teléfono ingresado
 	wxString password = txtRegPassword->GetValue();     // Obtener la contraseña ingresada
 	wxString rol = txtRol->GetValue();                  // Obtener el rol ingresado
 	wxString direccion = txtDireccion->GetValue();      // Obtener la dirección ingresada
@@ -101,40 +112,61 @@ void LoginApp::OnRegistrar(wxCommandEvent& event) {
 	}
 	
 	static int id = 1; // ID incremental
-	Usuario nuevoUsuario(id++, nombre.ToStdString().c_str(), direccion.ToStdString().c_str(), 
+	Usuario nuevoUsuario(id++, nombre.ToStdString().c_str(),stoi(dni.ToStdString()), direccion.ToStdString().c_str(), 
 						 rol.ToStdString().c_str(), password.ToStdString().c_str(), std::stoi(telefono.ToStdString()));
 	
 	gestor.agregarUsuario(nuevoUsuario);
 	wxMessageBox("Usuario registrado exitosamente.", "Éxito", wxOK | wxICON_INFORMATION);
 }
 
-// Evento: mostrar usuarios
+
+
 void LoginApp::OnMostrar(wxCommandEvent& event) {
+	// Leer la lista de usuarios desde el archivo utilizando el gestor
 	auto usuarios = gestor.leerUsuarios();
 	
+	// Si no hay usuarios registrados, muestra un mensaje y termina la función
 	if (usuarios.empty()) {
 		wxMessageBox("No hay usuarios registrados.", "Información", wxOK | wxICON_INFORMATION);
 		return;
 	}
 	
-	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Lista de Usuarios", wxDefaultPosition, wxSize(500, 300));
-	wxGrid* grid = new wxGrid(dialog, wxID_ANY, wxPoint(10, 10), wxSize(480, 260));
+	// Crear un cuadro de diálogo modal para mostrar la lista de usuarios
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Lista de Usuarios", wxDefaultPosition, wxSize(600, 400));
 	
-	grid->CreateGrid(usuarios.size(), 5); // Crear una tabla con las columnas necesarias
-	grid->SetColLabelValue(0, "ID");
-	grid->SetColLabelValue(1, "Nombre");
-	grid->SetColLabelValue(2, "Dirección");
-	grid->SetColLabelValue(3, "Rol");
-	grid->SetColLabelValue(4, "Teléfono");
+	// Crear una cuadrícula para mostrar los datos en forma de tabla
+	wxGrid* grid = new wxGrid(dialog, wxID_ANY, wxPoint(10, 10), wxSize(580, 350));
 	
+	// Configurar la cuadrícula con el número de filas igual al número de usuarios y 6 columnas
+	grid->CreateGrid(usuarios.size(), 6);
+	
+	// Configurar las etiquetas de las columnas
+	grid->SetColLabelValue(0, "ID");         // Columna para el ID del usuario
+	grid->SetColLabelValue(1, "Nombre");     // Columna para el Nombre del usuario
+	grid->SetColLabelValue(2, "DNI");        // Columna para el DNI del usuario
+	grid->SetColLabelValue(3, "Dirección");  // Columna para la Dirección del usuario
+	grid->SetColLabelValue(4, "Rol");        // Columna para el Rol del usuario
+	grid->SetColLabelValue(5, "Teléfono");   // Columna para el Teléfono del usuario
+	
+	// Llenar la cuadrícula con los datos de los usuarios
 	for (size_t i = 0; i < usuarios.size(); ++i) {
-		grid->SetCellValue(i, 0, std::to_string(usuarios[i].getId()));
-		grid->SetCellValue(i, 1, usuarios[i].getNombre());
-		grid->SetCellValue(i, 2, usuarios[i].getDireccion());
-		grid->SetCellValue(i, 3, usuarios[i].getRol());
-		grid->SetCellValue(i, 4, std::to_string(usuarios[i].getTelefono()));
+		try {
+			// Establecer valores en cada celda de la fila correspondiente al usuario
+			grid->SetCellValue(i, 0, std::to_string(usuarios[i].getId()));         // ID
+			grid->SetCellValue(i, 1, usuarios[i].getNombre());                    // Nombre
+			grid->SetCellValue(i, 2, std::to_string(usuarios[i].getDni()));       // DNI
+			grid->SetCellValue(i, 3, usuarios[i].getDireccion());                 // Dirección
+			grid->SetCellValue(i, 4, usuarios[i].getRol());                       // Rol
+			grid->SetCellValue(i, 5, std::to_string(usuarios[i].getTelefono()));  // Teléfono
+		} catch (const std::exception& e) {
+			// Capturar cualquier error al establecer valores en la cuadrícula
+			wxMessageBox("Error al mostrar los datos de un usuario.", "Error", wxOK | wxICON_ERROR);
+		}
 	}
 	
+	// Mostrar el cuadro de diálogo en modo modal
 	dialog->ShowModal();
+	
+	// Destruir el cuadro de diálogo después de cerrarlo
 	dialog->Destroy();
 }

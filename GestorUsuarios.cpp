@@ -1,16 +1,15 @@
 #include "GestorUsuarios.h"
 #include <fstream>
-#include <sstream>
 #include <iostream>
 #include <stdexcept>
 
 GestorUsuarios::GestorUsuarios(const string& archivoNombre) : archivo(archivoNombre) {}
 
 void GestorUsuarios::agregarUsuario(const Usuario& nuevoUsuario) {
-	ofstream salida(archivo, ios::app);
+	ofstream salida(archivo, ios::binary | ios::app); // Abre el archivo en modo binario de agregar (`append`).
 	if (salida.is_open()) {
-		usuario u = nuevoUsuario.getDatos();
-		salida << u.Id << "," << u.Nombre << "," << u.Direccion << "," << u.Rol << "," << u.Password << "," << u.telefono << "\n";
+		usuario datos = nuevoUsuario.getDatos();
+		salida.write(reinterpret_cast<const char*>(&datos), sizeof(datos)); // Escribe los datos binarios.
 		salida.close();
 	} else {
 		cerr << "No se pudo abrir el archivo para escribir.\n";
@@ -39,21 +38,14 @@ bool GestorUsuarios::validarCredenciales(const string& nombre, const string& con
 
 vector<Usuario> GestorUsuarios::leerUsuarios() {
 	vector<Usuario> usuarios;
-	ifstream entrada(archivo);
+	ifstream entrada(archivo, ios::binary); // Abre el archivo en modo binario.
 	if (entrada.is_open()) {
-		string linea;
-		while (getline(entrada, linea)) {
-			istringstream ss(linea);
-			string id, nombre, direccion, rol, password, telefono;
-			
-			getline(ss, id, ',');
-			getline(ss, nombre, ',');
-			getline(ss, direccion, ',');
-			getline(ss, rol, ',');
-			getline(ss, password, ',');
-			getline(ss, telefono);
-			
-			Usuario usuario(stoi(id), nombre.c_str(), direccion.c_str(), rol.c_str(), password.c_str(), stoi(telefono));
+		usuario datos;
+		while (entrada.read(reinterpret_cast<char*>(&datos), sizeof(datos))) { // Lee cada registro binario.
+			Usuario usuario(
+							datos.Id, datos.Nombre, datos.DNI, datos.Direccion, 
+							datos.Rol, datos.Password, datos.telefono
+							);
 			usuarios.push_back(usuario);
 		}
 		entrada.close();
