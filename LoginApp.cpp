@@ -2,6 +2,9 @@
 #include <wx/msgdlg.h>
 #include <wx/grid.h>
 
+#include "AdminFrame.h"  // Incluir encabezado de AdminFrame
+#include "UserFrame.h"   // Incluir encabezado de UserFrame
+
 // Constructor de la aplicación
 LoginApp::LoginApp(const wxString& title) 
 	: wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), gestor("usuarios.dat") {
@@ -80,17 +83,38 @@ LoginApp::LoginApp(const wxString& title)
 	
 }
 
+
+
+
 // Evento: iniciar sesión
 void LoginApp::OnLogin(wxCommandEvent& event) {
 	wxString nombre = txtLoginNombre->GetValue();       // Obtener el nombre ingresado
 	wxString password = txtLoginPassword->GetValue();   // Obtener la contraseña ingresada
 	
 	if (gestor.validarCredenciales(nombre.ToStdString(), password.ToStdString())) {
+
+		std::string rol = gestor.obtenerRolUsuario(nombre.ToStdString());
+		if(rol == "adm"){
+			AdminFrame* adminFrame = new AdminFrame();
+			adminFrame->Show(); //mostrar la pantalla del adminsitrador
+			this->Hide(); //Ocultar la ventana del login 
+		}
+		else if(rol == "usr"){
+			UserFrame* userFrame = new UserFrame();
+			
+			userFrame->Show();
+			this->Hide();// Ocultar la ventana de login
+		}
 		wxMessageBox("Inicio de sesión exitoso.", "Éxito", wxOK | wxICON_INFORMATION);
+		
 	} else {
 		wxMessageBox("Credenciales incorrectas.", "Error", wxOK | wxICON_ERROR);
 	}
 }
+
+
+
+
 
 // Evento: registrar usuario
 void LoginApp::OnRegistrar(wxCommandEvent& event) {

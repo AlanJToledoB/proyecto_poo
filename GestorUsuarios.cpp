@@ -63,3 +63,15 @@ void GestorUsuarios::mostrarUsuarios() {
 			<< ", Teléfono: " << usuario.getTelefono() << "\n";
 	}
 }
+
+string GestorUsuarios::obtenerRolUsuario(const string& nombre){
+	
+	vector <Usuario> usuarios = leerUsuarios();
+	for(const auto& usuario:usuarios){
+		if(usuario.getNombre() == nombre){
+			return usuario.getRol();
+		}
+		
+	}
+	return "";
+}

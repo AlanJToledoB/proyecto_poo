@@ -18,6 +18,7 @@ public:
 	Usuario buscarUsuarioPorNombre(const string& nombre);
 	bool validarCredenciales(const string& nombre, const string& password);
 	void mostrarUsuarios();
+	string obtenerRolUsuario(const string& nombre);
 	
 	vector<Usuario> leerUsuarios();
 };
