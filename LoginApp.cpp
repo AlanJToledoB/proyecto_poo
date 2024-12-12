@@ -98,15 +98,20 @@ void LoginApp::OnLogin(wxCommandEvent& event) {
 			AdminFrame* adminFrame = new AdminFrame();
 			adminFrame->Show(); //mostrar la pantalla del adminsitrador
 			this->Hide(); //Ocultar la ventana del login 
+			wxMessageBox("Inicio de sesión exitoso.", "Éxito", wxOK | wxICON_INFORMATION);
 		}
 		else if(rol == "usr"){
 			UserFrame* userFrame = new UserFrame();
 			
 			userFrame->Show();
 			this->Hide();// Ocultar la ventana de login
+			
+			wxMessageBox("Inicio de sesión exitoso.", "Éxito", wxOK | wxICON_INFORMATION);
 		}
-		wxMessageBox("Inicio de sesión exitoso.", "Éxito", wxOK | wxICON_INFORMATION);
-		
+		if(rol != "adm" && rol != "usr"){
+			wxMessageBox("ninguna de los roles de su credencial coinciden", "Error", wxOK | wxICON_ERROR);
+		}
+
 	} else {
 		wxMessageBox("Credenciales incorrectas.", "Error", wxOK | wxICON_ERROR);
 	}
