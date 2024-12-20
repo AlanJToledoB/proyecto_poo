@@ -19,6 +19,7 @@ public:
 	bool validarCredenciales(const string& nombre, const string& password);
 	void mostrarUsuarios();
 	string obtenerRolUsuario(const string& nombre);
+	bool dniExiste(int dni);
 	
 	vector<Usuario> leerUsuarios();
 };

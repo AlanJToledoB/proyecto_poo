@@ -75,3 +75,13 @@ string GestorUsuarios::obtenerRolUsuario(const string& nombre){
 	}
 	return "";
 }
+
+bool GestorUsuarios::dniExiste(int dni) {
+	auto usuarios = leerUsuarios(); // Leer todos los usuarios desde el archivo
+	for (const auto& usuario : usuarios) {
+		if (usuario.getDni() == dni) {
+			return true; // Retorna verdadero si encuentra un DNI duplicado
+		}
+	}
+	return false; // Retorna falso si no hay duplicados
+}

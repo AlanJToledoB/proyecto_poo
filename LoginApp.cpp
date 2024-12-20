@@ -121,16 +121,15 @@ void LoginApp::OnLogin(wxCommandEvent& event) {
 
 
 
-// Evento: registrar usuario
 void LoginApp::OnRegistrar(wxCommandEvent& event) {
-	wxString nombre = txtRegNombre->GetValue();         // Obtener el nombre ingresado
-	wxString dni = txtDni->GetValue();        // Obtener el teléfono ingresado
-	wxString password = txtRegPassword->GetValue();     // Obtener la contraseña ingresada
-	wxString rol = txtRol->GetValue();                  // Obtener el rol ingresado
-	wxString direccion = txtDireccion->GetValue();      // Obtener la dirección ingresada
-	wxString telefono = txtTelefono->GetValue();        // Obtener el teléfono ingresado
+	wxString nombre = txtRegNombre->GetValue();
+	wxString dni = txtDni->GetValue();
+	wxString password = txtRegPassword->GetValue();
+	wxString rol = txtRol->GetValue();
+	wxString direccion = txtDireccion->GetValue();
+	wxString telefono = txtTelefono->GetValue();
 	
-	if (nombre.IsEmpty() || password.IsEmpty() || rol.IsEmpty() || direccion.IsEmpty() || telefono.IsEmpty()) {
+	if (nombre.IsEmpty() || password.IsEmpty() || rol.IsEmpty() || direccion.IsEmpty() || telefono.IsEmpty() || dni.IsEmpty()) {
 		wxMessageBox("Por favor, complete todos los campos.", "Error", wxOK | wxICON_WARNING);
 		return;
 	}
@@ -140,13 +139,22 @@ void LoginApp::OnRegistrar(wxCommandEvent& event) {
 		return;
 	}
 	
+	int dniInt = std::stoi(dni.ToStdString());
+	
+	// Verificar si el DNI ya existe
+	if (gestor.dniExiste(dniInt)) {
+		wxMessageBox("El DNI ingresado ya está registrado. Por favor, use un DNI diferente.", "Error", wxOK | wxICON_WARNING);
+		return;
+	}
+	
 	static int id = 1; // ID incremental
-	Usuario nuevoUsuario(id++, nombre.ToStdString().c_str(),stoi(dni.ToStdString()), direccion.ToStdString().c_str(), 
+	Usuario nuevoUsuario(id++, nombre.ToStdString().c_str(), dniInt, direccion.ToStdString().c_str(),
 						 rol.ToStdString().c_str(), password.ToStdString().c_str(), std::stoi(telefono.ToStdString()));
 	
 	gestor.agregarUsuario(nuevoUsuario);
 	wxMessageBox("Usuario registrado exitosamente.", "Éxito", wxOK | wxICON_INFORMATION);
 }
+
 
 
 

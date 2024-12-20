@@ -20,7 +20,8 @@ AdminFrame::AdminFrame()
 
 
 void AdminFrame::crearUsu(wxCommandEvent& event){
-	AdminEditUser* adminUser = new AdminEditUser();
+	
+	AdminEditUser* adminUser = new AdminEditUser("usuarios.dat");
 	adminUser -> Show();
 	
 	this->Hide();
